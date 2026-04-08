@@ -22,9 +22,8 @@
             <div class="info-section">
                 <div class="info-group">
                     <span class="label">Получатель:</span>
-                    <p class="value" id="ticket-garage">Оплата проезда в троллейбусе, гар. номер 36749<br>
-                    г. Гомель<br>
-                    ОАО "Гомельоблавтотранс" филиал "Горэлектротранспорт</p>
+                    <p class="value" id="ticket-garage">
+                        </p>
                 </div>
 
                 <div class="info-group">
@@ -57,31 +56,33 @@
 
     <script>
         function updateTicket() {
-            const g = localStorage.getItem('cashew_garage');
-            const d = localStorage.getItem('cashew_date');
+            const g = localStorage.getItem('cashew_garage') || "36749";
+            const d = localStorage.getItem('cashew_date') || "02.04.2026 16:35";
+            const t = localStorage.getItem('cashew_type') || "1";
 
-            if (g) {
-                document.getElementById('ticket-garage').innerHTML = `Оплата проезда в автобусе, гар. номер ${g}<br>г. Гомель<br>Филиал "Автобусный парк № 1"`;
+            const garageEl = document.getElementById('ticket-garage');
+            
+            if (t === "2") {
+                garageEl.innerHTML = `Оплата проезда в троллейбусе, гар. номер ${g}<br>г. Гомель<br>ОАО "Гомельоблавтотранс" филиал "Горэлектротранспорт"`;
+            } else {
+                garageEl.innerHTML = `Оплата проезда в автобусе, гар. номер ${g}<br>г. Гомель<br>Филиал "Автобусный парк № 1"`;
             }
-            if (d) {
-                document.getElementById('ticket-time-from').innerText = d;
+
+            document.getElementById('ticket-time-from').innerText = d;
+            
+            try {
+                let parts = d.split(' ');
+                let timeParts = parts[1].split(':');
+                let date = new Date();
+                date.setHours(parseInt(timeParts[0]));
+                date.setMinutes(parseInt(timeParts[1]) + 40);
                 
-                // Автоматический расчет конца поездки (+40 минут)
-                try {
-                    let parts = d.split(' ');
-                    let timeParts = parts[1].split(':');
-                    let date = new Date();
-                    date.setHours(parseInt(timeParts[0]));
-                    date.setMinutes(parseInt(timeParts[1]) + 40);
-                    
-                    let newH = String(date.getHours()).padStart(2, '0');
-                    let newM = String(date.getMinutes()).padStart(2, '0');
-                    document.getElementById('ticket-time-to').innerText = parts[0] + " " + newH + ":" + newM;
-                } catch(e) {}
-            }
+                let newH = String(date.getHours()).padStart(2, '0');
+                let newM = String(date.getMinutes()).padStart(2, '0');
+                document.getElementById('ticket-time-to').innerText = parts[0] + " " + newH + ":" + newM;
+            } catch(e) {}
         }
 
-        // Выполняется автоматически при открытии страницы
         window.addEventListener('DOMContentLoaded', updateTicket);
     </script>
 </body>
