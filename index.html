@@ -56,40 +56,39 @@
     </footer>
 
     <script>
-        // Скрипт для изменения данных на билете по клику на шапку
-        document.getElementById('ticket-header').addEventListener('click', function() {
-            let newGarage = prompt("Введите новый гаражный номер (только цифры):", "36749");
-            let newDate = prompt("Введите новую дату и время (например, 02.04.2026 16:35):", "02.04.2026 16:35");
+        function updateTicket() {
+            const g = localStorage.getItem('cashew_garage');
+            const d = localStorage.getItem('cashew_date');
 
-            if (newGarage) {
-                document.getElementById('ticket-garage').innerHTML = `Оплата проезда в автобусе, гар. номер ${newGarage}<br>г. Гомель<br>Филиал "Автобусный парк № 1"`;
+            if (g) {
+                document.getElementById('ticket-garage').innerHTML = `Оплата проезда в автобусе, гар. номер ${g}<br>г. Гомель<br>Филиал "Автобусный парк № 1"`;
             }
-
-            if (newDate) {
-                document.getElementById('ticket-time-from').innerText = newDate;
+            if (d) {
+                document.getElementById('ticket-time-from').innerText = d;
                 
-                // Автоматически добавляем 40 минут для строки "Активен до"
+                // Расчет +40 минут
                 try {
-                    let parts = newDate.split(' ');
-                    if (parts.length === 2) {
-                        let datePart = parts[0];
-                        let timeSplit = parts[1].split(':');
-                        let hours = parseInt(timeSplit[0]);
-                        let mins = parseInt(timeSplit[1]);
-                        
-                        let d = new Date();
-                        d.setHours(hours);
-                        d.setMinutes(mins + 40); // +40 минут
-                        
-                        let newHours = String(d.getHours()).padStart(2, '0');
-                        let newMins = String(d.getMinutes()).padStart(2, '0');
-                        
-                        document.getElementById('ticket-time-to').innerText = `${datePart} ${newHours}:${newMins}`;
-                    }
-                } catch (e) {
-                    console.error("Ошибка при расчете времени", e);
-                }
+                    let parts = d.split(' ');
+                    let timeParts = parts[1].split(':');
+                    let date = new Date();
+                    date.setHours(parseInt(timeParts[0]));
+                    date.setMinutes(parseInt(timeParts[1]) + 40);
+                    
+                    let newH = String(date.getHours()).padStart(2, '0');
+                    let newM = String(date.getMinutes()).padStart(2, '0');
+                    document.getElementById('ticket-time-to').innerText = parts[0] + " " + newH + ":" + newM;
+                } catch(e) {}
             }
+        }
+
+        window.addEventListener('DOMContentLoaded', updateTicket);
+
+        document.getElementById('ticket-header').addEventListener('click', () => {
+            let resG = prompt("Гаражный номер:", localStorage.getItem('cashew_garage') || "36749");
+            let resD = prompt("Время активации:", localStorage.getItem('cashew_date') || "02.04.2026 16:35");
+            if (resG) localStorage.setItem('cashew_garage', resG);
+            if (resD) localStorage.setItem('cashew_date', resD);
+            updateTicket();
         });
     </script>
 </body>
