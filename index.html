@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <header class="header">
+    <header class="header" id="ticket-header" style="cursor: pointer;">
         <img src="header.png" alt="Header" class="header-img">
     </header>
 
@@ -22,19 +22,19 @@
             <div class="info-section">
                 <div class="info-group">
                     <span class="label">Получатель:</span>
-                    <p class="value">Оплата проезда в автобусе, гар. номер 36064<br>
+                    <p class="value" id="ticket-garage">Оплата проезда в автобусе, гар. номер 36749<br>
                     г. Гомель<br>
                     Филиал "Автобусный парк № 1"</p>
                 </div>
 
                 <div class="info-group">
                     <span class="label">Активен с:</span>
-                    <p class="value">06.04.2026 7:46</p>
+                    <p class="value" id="ticket-time-from">02.04.2026 16:35</p>
                 </div>
 
                 <div class="info-group">
                     <span class="label">Активен до:</span>
-                    <p class="value">06.04.2026 8:26</p>
+                    <p class="value" id="ticket-time-to">02.04.2026 17:15</p>
                 </div>
 
                 <div class="info-group">
@@ -55,5 +55,42 @@
         <p><a href="mailto:info@cashew.me">info@cashew.me</a></p>
     </footer>
 
+    <script>
+        // Скрипт для изменения данных на билете по клику на шапку
+        document.getElementById('ticket-header').addEventListener('click', function() {
+            let newGarage = prompt("Введите новый гаражный номер (только цифры):", "36749");
+            let newDate = prompt("Введите новую дату и время (например, 02.04.2026 16:35):", "02.04.2026 16:35");
+
+            if (newGarage) {
+                document.getElementById('ticket-garage').innerHTML = `Оплата проезда в автобусе, гар. номер ${newGarage}<br>г. Гомель<br>Филиал "Автобусный парк № 1"`;
+            }
+
+            if (newDate) {
+                document.getElementById('ticket-time-from').innerText = newDate;
+                
+                // Автоматически добавляем 40 минут для строки "Активен до"
+                try {
+                    let parts = newDate.split(' ');
+                    if (parts.length === 2) {
+                        let datePart = parts[0];
+                        let timeSplit = parts[1].split(':');
+                        let hours = parseInt(timeSplit[0]);
+                        let mins = parseInt(timeSplit[1]);
+                        
+                        let d = new Date();
+                        d.setHours(hours);
+                        d.setMinutes(mins + 40); // +40 минут
+                        
+                        let newHours = String(d.getHours()).padStart(2, '0');
+                        let newMins = String(d.getMinutes()).padStart(2, '0');
+                        
+                        document.getElementById('ticket-time-to').innerText = `${datePart} ${newHours}:${newMins}`;
+                    }
+                } catch (e) {
+                    console.error("Ошибка при расчете времени", e);
+                }
+            }
+        });
+    </script>
 </body>
 </html>
